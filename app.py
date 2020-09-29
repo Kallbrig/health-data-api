@@ -1,15 +1,13 @@
-from quotes import LIST_OF_DATA, data
 import pandas as pd
-
-# https://pythonbasics.org/flask-rest-api/
-# https://nordicapis.com/how-to-create-an-api-from-a-dataset-using-python-and-flask/
-
 import json
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 import random
 from datetime import datetime
 from marshmallow import Schema, fields
+
+# https://pythonbasics.org/flask-rest-api/
+# https://nordicapis.com/how-to-create-an-api-from-a-dataset-using-python-and-flask/
 
 
 class ConditionGetSchema(Schema):
@@ -84,7 +82,9 @@ class Condition(Resource):
         # This currently returns the new entry only.
         return data_df.tail(1).to_json()
 
-    def delete(self,):
+    # DELETE IS INCOMPLETE.
+    # IT RETURNS 1 CONTINUOUSLY AS LONG AS THERE AREN'T ANY ERRORS
+    def delete(self, ):
 
         errors = data_delete_schema.validate(request.args)
         if errors:
