@@ -6,6 +6,7 @@ import random
 from datetime import datetime
 from marshmallow import Schema, fields
 
+
 # https://pythonbasics.org/flask-rest-api/
 # https://nordicapis.com/how-to-create-an-api-from-a-dataset-using-python-and-flask/
 
@@ -34,7 +35,6 @@ data_post_schema = ConditionPostSchema()
 data_delete_schema = ConditionDeleteSchema()
 
 
-# a get request must be
 class Condition(Resource):
 
     def get(self):
@@ -83,16 +83,23 @@ class Condition(Resource):
         return data_df.tail(1).to_json()
 
     # DELETE IS INCOMPLETE.
-    # IT RETURNS 1 CONTINUOUSLY AS LONG AS THERE AREN'T ANY ERRORS
+    # IT RETURNS THE ENTRIES TO BE DELETED.
+    # THESE ENTRIES ARE CURRENTLY BEING IDENTIFIED USING TIME
     def delete(self, ):
 
         errors = data_delete_schema.validate(request.args)
         if errors:
             return 400, str(errors)
 
-        return 1
+        data_df = pd.read_csv(f'data/{request.args["id"]}_user_data.csv', )
 
-        # return {'data': 'None Found To Delete'}
+        entries_to_delete = data_df.loc[(data_df['time'] == request.args['time'])]
+        # (data_df['time'] == request.args['time'])
+        print(str(entries_to_delete))
+
+        # data_df.to_csv(f'data/{request.args["id"]}_user_data.csv', index=True, index_label='index')
+        return entries_to_delete.to_json()
+
 
 
 api.add_resource(Condition, '/res/', '/res')

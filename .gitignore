@@ -1,1 +1,4 @@
 /venv/
+!/data/3_user_data.csv
+!/data/2_user_data.csv
+!/data/1_user_data.csv
