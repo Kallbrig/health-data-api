@@ -5,6 +5,7 @@ from flask_restful import Resource, Api
 import random
 from datetime import datetime
 from marshmallow import Schema, fields
+import os
 
 
 # https://pythonbasics.org/flask-rest-api/
@@ -41,22 +42,34 @@ class Condition(Resource):
         # returns errors if there are any
         errors = data_get_schema.validate(request.args)
         if errors:
-            return 400, str(errors)
+            return str(errors), 400
 
-        # reading in heart rate data as a pandas dataframe
-        data_df = pd.read_csv(f'data/{request.args["id"]}_user_data.csv', )
+        # reading in user data as a pandas dataframe
+
+        # data_df = pd.read_json(f'data/{request.args["id"]}_user_data.json', )
+
+        with open(f'data/{request.args["id"]}_user_data.json', 'r') as file:
+
+            user_data = json.loads(file.read())
+
+
+        print(user_data['exercise_minutes'])
 
         # TO-DO - ADD A PARAMETER TO GET REQUESTS TO AUTHENTICATE
         # TO-DO - ADD A PARAMETER TO GET REQUESTS TO FILTER RESULTS BY DATE
 
+
         # Returns full user information.
-        return data_df.to_json()
+
+
+        return user_data, 200
+
 
     def post(self):
 
         errors = data_post_schema.validate(request.args)
         if errors:
-            return 400, str(errors)
+            return str(errors), 400
 
         # default values for all information that will be inputted into the dataframe.
         # Keys are column headers and values are defaults.
@@ -89,7 +102,7 @@ class Condition(Resource):
 
         errors = data_delete_schema.validate(request.args)
         if errors:
-            return 400, str(errors)
+            return str(errors), 400
 
         data_df = pd.read_csv(f'data/{request.args["id"]}_user_data.csv', )
 
@@ -99,7 +112,6 @@ class Condition(Resource):
 
         # data_df.to_csv(f'data/{request.args["id"]}_user_data.csv', index=True, index_label='index')
         return entries_to_delete.to_json()
-
 
 
 api.add_resource(Condition, '/res/', '/res')
